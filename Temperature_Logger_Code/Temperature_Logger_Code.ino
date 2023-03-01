@@ -15,13 +15,24 @@
 #include <SPI.h>
 #include <RTClib.h>
 #include <OneWire.h>
-//#include <DallasTemperature.h>
 
+RTC_DS1307 rtc; // communication with clock
+
+OneWire ow(4); //onewire(Pin4) bus initialisation
 
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
 
+  if(!rtc.begin()) {//if begin is not succesful
+    Serial.println("RTC is NOT running. Let's set time now");
+    rtc.adjust(DateTime(F(__DATE__),F(__TIME__)));
+  }
+  
+  if(!SD.begin(10)){
+    Serial.println("SD module initialization failed or Card is not present");
+    return;
+  }
 }
 
 void loop() {
