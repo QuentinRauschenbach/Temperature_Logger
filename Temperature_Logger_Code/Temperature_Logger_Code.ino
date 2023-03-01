@@ -11,10 +11,15 @@
  * 
  ***********************************/
 
+
+ 
 #include <SD.h>
 #include <SPI.h>
 #include <RTClib.h>
 #include <OneWire.h>
+
+#include "ds18b20.h"
+
 
 RTC_DS1307 rtc; // communication with clock
 
@@ -36,6 +41,11 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  //Start first sequence
+  ow.reset();     // reset onewire bus
+  ow.write(CONVERT_T); // convert detected value to Temp in °C
+  // to make things more readable 
+  
+  
 
 }
