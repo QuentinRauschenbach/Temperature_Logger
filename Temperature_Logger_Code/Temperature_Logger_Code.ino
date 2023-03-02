@@ -83,12 +83,14 @@ void loop() {
   float tempCelcius = tempRead / 16.0; // 2**-4 = 16 behind comma 
 
   // print timestamp, sensor-id,temperature
-  Serial.print(String(getISOtime())+", ");
-  Serial.print(String(registration_number)+", ");
-  Serial.println(String(tempCelcius));
-  //printOutput(String(getISOtime())+", ");
-  //printOutput(String(registration_number)+", ");
-  //printOutputln(String(tempCelcius));
+  printOutput(getISOtime());
+  printOutput(", ");
+  printOutput(String(millis()));
+  printOutput(", ");
+  printOutput(registration_number);
+  printOutput(", ");
+  printOutputln(String(tempCelcius));
+  
   delay(1000);
   
   
