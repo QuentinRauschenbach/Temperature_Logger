@@ -28,6 +28,10 @@ def create_time_axis(df):
     df.to_csv(inpath+"test.LOG",sep=',',index=False)
     return df
 
+debug = ["temp"]
+
+fit_parameter = {'DF': [ 0.00171593, -0.04987637,  0.88662819], 'DKB': [ 0.00119211, -0.02983068,  0.14389312], 'KiS': [ 0.00036888, -0.01093385,  0.09981709], 'KM': [ 0.00219469, -0.06951533,  0.46263249], 'KS': [ 1.47361701e-03, -6.23715667e-02,  1.58281494e+00], 'LG': [ 0.00158846, -0.05031084,  0.58245583], 'QR': [ 0.00140693, -0.04060876,  0.44311093], 'SimonS': [ 0.00075733, -0.02163417,  0.08605323]}
+
 #%%
 
 callibration = pd.read_csv(inpath +"c_tsensor_calibration_time_constant_new.log", 
@@ -55,6 +59,13 @@ for i, file in enumerate(files[:]):
                           sep=',', comment='#', header=None,
                           names=['time', 'millis', 'ID', 'temperature'])
     
+    # callibrate
+    if "temp" in debug:
+        print(tsticks['temperature'].values[0])
+        print((fit_parameter[name][0]*tsticks['temperature']**2 + fit_parameter[name][1]*tsticks['temperature']+fit_parameter[name][2])[0])
+    #tsticks['temperature'] = tsticks['temperature'] - (fit_parameter[name][0]*tsticks['temperature']**2 + fit_parameter[name][1]*tsticks['temperature']+fit_parameter[name][2])
+    print(tsticks['temperature'].values[0])
+    
     # convert date into datetime-format
     tsticks["time"] = pd.to_datetime(tsticks["time"], utc=True).dt.tz_localize(None)
     
@@ -75,13 +86,15 @@ for i, file in enumerate(files[:]):
     
     Offset = tsticks["time"][start_index] - callibration["time"][2]
     
-    print("shock ",tsticks["time"][start_index])
-    print("Offset",tsticks["time"][start_index] - callibration["time"][2])
-    print("old   ",tsticks["time"][0])
-    print("new   ",tsticks["time"][0]-Offset)
+    if "time" in debug:
+        print("shock ",tsticks["time"][start_index])
+        print("Offset",tsticks["time"][start_index] - callibration["time"][2])
+        print("old   ",tsticks["time"][0])
+        print("new   ",tsticks["time"][0]-Offset)
     
     tsticks["time"] = tsticks["time"] -Offset
-    print("shock ",tsticks["time"][start_index])
+    if "time" in debug:
+        print("shock ",tsticks["time"][start_index])
         
     sum_diff = np.zeros(len(diff))
     n= 100
@@ -111,8 +124,8 @@ for i, file in enumerate(files[:]):
     print("")
         
     # plot  
-    plt.hlines(np.nanmean(tsticks['temperature'][start-30:start]),0,550000,zorder=0,linestyle="--",color=c[i])
-    plt.hlines(np.nanmean(tsticks['temperature'][stop:stop+30]),0,550000,zorder=0,linestyle="--",color=c[i])
+    #plt.hlines(np.nanmean(tsticks['temperature'][start-30:start]),0,550000,zorder=0,linestyle="--",color=c[i])
+    #plt.hlines(np.nanmean(tsticks['temperature'][stop:stop+30]),0,550000,zorder=0,linestyle="--",color=c[i])
     
     plt.scatter(start_time,tsticks["temperature"].values[millis_200000+millis_start],marker="x",c=c[i],zorder=1)
     plt.scatter(end_time,tsticks["temperature"].values[millis_200000+millis_start+millis_end+50],marker="o",c=c[i],zorder=2)
@@ -127,8 +140,8 @@ for i, file in enumerate(files[:]):
 plt.title("Time Constant",weight= "bold")    
 plt.ylabel("Temperature [°C]")
 plt.xlabel("time [ms]")
-plt.xlim(160000,450000)
-plt.ylim(0,25)
+plt.xlim(350000,400000)
+plt.ylim(0,5)
 plt.legend(loc=5)
 plt.grid()
 
