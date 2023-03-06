@@ -22,6 +22,8 @@
 
 // User-defined constants
 const String logfile = "tsensor.log";
+float temp_sum = 0;
+int cnt = 1;
 
 RTC_DS1307 rtc; // communication with clock
 
@@ -81,17 +83,28 @@ void loop() {
   // temp info in the first two bytes
   int16_t tempRead = sp_data[1] << 8 | sp_data[0]; // 8-bit shift & OR-ing -> 16 bit int (1101 1010 .... ....) already takes care of the sign
   float tempCelcius = tempRead / 16.0; // 2**-4 = 16 behind comma 
+  temp_sum += tempCelcius;
 
-  // print timestamp, sensor-id,temperature
-  printOutput(getISOtime());
-  printOutput(", ");
-  printOutput(String(millis()));
-  printOutput(", ");
-  printOutput(registration_number);
-  printOutput(", ");
-  printOutputln(String(tempCelcius));
+  if(cnt%20==0){
+    float temp_avg = temp_sum / 20.0;
+    // print timestamp, sensor-id,temperature
+    printOutput(getISOtime());
+    printOutput(", ");
+    printOutput(String(millis()));
+    printOutput(", ");
+    printOutput(registration_number);
+    printOutput(", ");
+    printOutput(String(tempCelcius));
+    printOutput(", ");
+    printOutputln(String(temp_avg));
+
+    temp_sum = 0;
+
+  }
   
   delay(1000);
+
+  cnt +=1;
   
   
   
