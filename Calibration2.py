@@ -35,7 +35,6 @@ for count, file in enumerate(files[:-1]):
     print(name)
     df2 = pd.read_csv(file, sep=',', comment='#',names=["time","millis","ID","temperature"])
     df2 = df2[["time",variable]]
-    print(df2.time.values[0])
     df2 = df2.rename(columns={variable: name})
     df2["time"] = pd.to_datetime(df2["time"], utc=True).dt.tz_localize(None)
     df_spot1 = pd.merge_ordered(df_spot1, df2)#, fill_method="ffill", left_by="group")
@@ -47,15 +46,6 @@ df_spot1 = df_spot1.interpolate(method = "time")
 df_spot1 = df_spot1.reindex(df1.time)
 
 sensor_list = df_spot1.columns.values.tolist()[:]
-
-#%%
-
-plt.figure(figsize = (7.5,6))
-
-for sensor in sensor_list[1:]:
-    plt.plot(df_spot1.index.values,df_spot1[sensor].values,label = sensor, alpha = 0.5,linestyle = "--")
-plt.plot(df_spot1.index.values,df_spot1[sensor_list[0]].values,label = sensor_list[0])
-plt.legend()
 
 #%% find calibration
 plt.figure(figsize = (7.5,6))
@@ -72,6 +62,7 @@ for i, sensor in enumerate(sensor_list[1:]):
     #plt.plot(df_spot1[sensor_list[0]].values,df_spot1[sensor].values,label = sensor, alpha = 0.5,linestyle = "--")
     plt.plot(df_spot1[sensor_list[0]].values,df_spot1[sensor].values-df_spot1[sensor_list[0]].values,label = sensor, alpha = 1,linestyle = "--",c=c[i])
 #plt.plot(df_spot1[sensor_list[0]].values,df_spot1[sensor_list[0]].values,label = sensor_list[0])   
+plt.xlabel("Sensor - Labor") 
 plt.xlabel("Labor") 
 plt.legend()
 

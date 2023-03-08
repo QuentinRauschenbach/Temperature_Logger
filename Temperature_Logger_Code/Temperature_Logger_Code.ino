@@ -24,6 +24,7 @@
 const String logfile = "tsensor.log";
 float temp_sum = 0;
 int cnt = 1;
+String header = "# timestamp, millis, sensor_id, temperature in °C with 2 digits (spot, avg)";
 
 RTC_DS1307 rtc; // communication with clock
 
@@ -47,6 +48,7 @@ void setup() {
     Serial.println("SD module initialization failed or Card is not present");
     return;
   }
+  printOutputln(header);
 }
 
 void loop() {
@@ -84,9 +86,9 @@ void loop() {
   int16_t tempRead = sp_data[1] << 8 | sp_data[0]; // 8-bit shift & OR-ing -> 16 bit int (1101 1010 .... ....) already takes care of the sign
   float tempCelcius = tempRead / 16.0; // 2**-4 = 16 behind comma 
   temp_sum += tempCelcius;
-
-  if(cnt%20==0){
-    float temp_avg = temp_sum / 20.0;
+  
+  if(cnt%10==0){
+    float temp_avg = temp_sum / 10.0;
     // print timestamp, sensor-id,temperature
     printOutput(getISOtime());
     printOutput(", ");
@@ -97,12 +99,19 @@ void loop() {
     printOutput(String(tempCelcius));
     printOutput(", ");
     printOutputln(String(temp_avg));
-
+    
     temp_sum = 0;
+  }
+ 
+  
+  //set time interval to 1 second
 
+  float next_1000 = (int(millis()/1000) +1.0)*1000.0;
+  if (next_1000-millis() < 0) {
+    Serial.println("Error!");
   }
   
-  delay(1000);
+  delay((int(millis()/1000) +1.0)*1000.0-millis());
 
   cnt +=1;
   
