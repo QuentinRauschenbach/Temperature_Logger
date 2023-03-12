@@ -20,18 +20,20 @@
 // User-defined constants
 const String logfile = "tsensor.log";
 const String header = "# timestamp, millis, sensor_id, temperature in °C with 2 digits (spot, avg)";
+const float spot_interval = 1.0; // seconds between two spot measurments (has to be at least 1.0 second to ensure complete temperature conversion by the sensor)
+const float N = 10;              // number of spot measurments to average
+
 float temp_sum = 0;
 int cnt = 1;
-const float spot_interval = 1.0; // seconds between two spot measurments
-const float N = 10;             // number of spot measurments to average over
 
-RTC_DS1307 rtc;             // communication with clock
-OneWire ow(4);              // initialise onewire bus on pin4
+
+RTC_DS1307 rtc;                  // communication with clock
+OneWire ow(4);                   // initialise onewire bus on pin4
 
 void setup() {
   Serial.begin(9600);
 
-  if(!rtc.begin()) {        //if begin is not succesful
+  if(!rtc.begin()) {             //if begin is not succesful
     Serial.println("RTC is NOT running. Let's set time now");
     rtc.adjust(DateTime(F(__DATE__),F(__TIME__)));
   }
@@ -57,7 +59,7 @@ void loop() {
   ow.reset();               // reset onewire bus
   ow.write(READ_ROM);
   
-  for (int i=0; i<8; i++){  // ++ increase by one at the end of the loop
+  for (int i=0; i<8; i++){  
     rom_code[i] = ow.read(); // rom_code = [LSB ... MSB] = [family code (0x28),48-bits (serial nr),CRC]
   }
   
@@ -66,7 +68,7 @@ void loop() {
   }
   String registration_number;
   for (int i=1; i<7; i++){
-    registration_number += String(rom_code[i],HEX);//append string store serial number
+    registration_number += String(rom_code[i],HEX);
   }
 
   // Start sequence: convert temperature
@@ -82,14 +84,14 @@ void loop() {
     sp_data[i] = ow.read(); 
   }
   // temp info in the first two bytes
-  int16_t tempRead = sp_data[1] << 8 | sp_data[0]; // 8-bit shift & OR-ing -> 16 bit int (1101 1010 .... ....) already takes care of the sign
-  float tempCelcius = tempRead / 16.0; // 2**-4 = 16 behind comma 
+  int16_t tempRead = sp_data[1] << 8 | sp_data[0]; // 8-bit shift & OR-ing
+  float tempCelcius = tempRead / 16.0; 
   
   temp_sum += tempCelcius;
   
   if(cnt%int(N)==0){
     float temp_avg = temp_sum / N ;
-    // print timestamp, sensor-id,temperature
+    // print timestamp, millis, sensor-id, temperature (spot, average)
     printOutput(getISOtime());
     printOutput(", ");
     printOutput(String(millis()));
@@ -104,7 +106,7 @@ void loop() {
   }
  
   
-  //set time interval to 1 second
+  //set time interval to "spot_interval"
   float next_1000 = (int(millis()/1000) + spot_interval)*1000.0; 
   if (next_1000-millis() < 0) {
     Serial.println("Error!");

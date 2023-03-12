@@ -59,8 +59,10 @@ end_index   = 500 # end index "shock" experiment
 t_const = 0.1 # °C below which diff we consinder Temp as const
 av_const = 30 # number of values to average
 
-plotpath = "C:/Users/qraus/Documents/Uni/9_22-23WiSe/Measurement Electronics/Temperature_Logger/"
+plotpath = "C:/Users/qraus/Documents/Uni/9_22-23WiSe/Measurement Electronics/Temperature_Logger/pictures/"
 inpath = "C:/Users/qraus/Documents/Uni/9_22-23WiSe/Measurement Electronics/Temperature_Logger/data/"
+
+# by hand from Calibration.py
 fit_parameter = {'DF': [ 0.00171593, -0.04987637,  0.88662819], 'DKB': [ 0.00119211, -0.02983068,  0.14389312], 'KiS': [ 0.00036888, -0.01093385,  0.09981709], 'KM': [ 0.00219469, -0.06951533,  0.46263249], 'KS': [ 1.47361701e-03, -6.23715667e-02,  1.58281494e+00], 'LG': [ 0.00158846, -0.05031084,  0.58245583], 'QR': [ 0.00140693, -0.04060876,  0.44311093], 'SimonS': [ 0.00075733, -0.02163417,  0.08605323]}
 
 #%% Load calibration file
