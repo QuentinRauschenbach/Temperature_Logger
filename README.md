@@ -23,7 +23,8 @@ Follow the wiring from the circuit diagram in *pictures* to connect an Arduino t
 ```
 ├── Temperature_Logger_Code          <- Arduino main code + two helpers
 │
-├── analysis                         <- Python code used for calibration and derivation of the time constant of the sensors
+├── analysis                         <- Python code used for calibration and derivation of the time
+│                                       constant of the sensors
 ├── data                             <- Contains 9 temperature measurments from DS18B20s and 
 │   │                                   Greisinger reference data digitalized from the lab-book.
 │   ├── adjusted                     <- DS18B20 data with synchronized time axis
