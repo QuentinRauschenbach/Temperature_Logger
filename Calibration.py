@@ -52,16 +52,13 @@ df = df.reindex(df1.time)
 
 sensor_list = df.columns.values.tolist()[:]
 
-#%% find calibration
+#%% find calibration & quick plot
 plt.figure(figsize = (7.5,6))
 fity = np.zeros((len(sensor_list[1:]),len(df[sensor_list[0]])))
 fit_parameter = {}
 
 for i, sensor in enumerate(sensor_list[1:]):
     fit_parameter[sensor] = np.polyfit(df[sensor_list[0]].values, df[sensor].values-df[sensor_list[0]].values, 2)
-    
-    #df[sensor] = df[sensor]
-    
     fity[i] = fit_parameter[sensor][2]+fit_parameter[sensor][1]*df[sensor_list[0]]+fit_parameter[sensor][0]*df[sensor_list[0]]**2
     plt.plot(df[sensor_list[0]],fity[i])
     #plt.plot(df[sensor_list[0]].values,df[sensor].values,label = sensor, alpha = 0.5,linestyle = "--")
@@ -79,7 +76,8 @@ plt.suptitle("Temperature Calibration", fontsize=16, fontweight= "bold")
 
 
 axs.set_xlabel('Temperature Reference Sensor [°C]')
-axs.set_title('Difference Between DS18B20 Sensors and Reference Sensor')
+#axs.set_title('Difference Between DS18B20 Sensors and Reference Sensor')
+axs.set_title(r'$\Delta$T of DS18B20 Sensors - Greisinger')
 axs.set_ylabel('Temperature Difference [°C]')
 axs.plot(np.nan,np.nan,label = "fit", color = "black")
 axs.plot(np.nan,np.nan,label = "data", color = "black",linestyle = "--")
@@ -94,6 +92,7 @@ for i, sensor in enumerate(sensor_list[1:]):
     axs.plot(df[sensor_list[0]],fity[i],label = sensor)
     axs.plot(df[sensor_list[0]].values,df[sensor].values-df[sensor_list[0]].values,linestyle = "--",c=c[i])
 
-axs.legend(bbox_to_anchor=(1, 0.7))
-plt.savefig(plotpath + "Calibration.png", dpi = 300, bbox_inches='tight')
+axs.legend(bbox_to_anchor=(1, 0.8))
+#plt.savefig(plotpath + "Calibration.png", dpi = 300, bbox_inches='tight')
+plt.savefig(plotpath + "Calibration.pdf", bbox_inches='tight')
 plt.show()

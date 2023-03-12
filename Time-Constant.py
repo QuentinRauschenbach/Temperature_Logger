@@ -151,5 +151,6 @@ plt.ylim(0,25)
 plt.legend(loc=5)
 plt.grid()
 
-plt.savefig(plotpath + "time-const.png", dpi = 300, bbox_inches='tight')
+#plt.savefig(plotpath + "time-const.png", dpi = 300, bbox_inches='tight')
+plt.savefig(plotpath + "time-const.pdf", bbox_inches='tight')
 
